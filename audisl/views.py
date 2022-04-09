@@ -22,8 +22,10 @@ from pydub import AudioSegment
 from os import path
 from pydub import AudioSegment
 import json
+import ffmpy
+import urllib
 import pydub
-pydub.AudioSegment.converter = r"E:\\ffmpeg-5.0.1-full_build\\bin\\ffmpeg.exe"
+#pydub.AudioSegment.converter = r"E:\\ffmpeg-5.0.1-full_build\\bin\\ffmpeg.exe"
 
 # Create your views here.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -144,7 +146,7 @@ def ajax(request):
         destination.write(file_obj)
         src = "E:/Hluchy/media/audisl/audioFiles/"+filename+".bin"
         dst = "E:/Hluchy/media/audisl/audioFiles/"+filename+".wav"
-        sound = AudioSegment.from_file(src)
+        sound = pydub.AudioSegment.from_file(src)
         sound.export(dst, format="wav")
         print('File Stored @ audio')
     os.remove(src)  # to delete the .bin file
