@@ -1,13 +1,9 @@
 from django.shortcuts import render
-
-# Create your views here.
-
-from django.shortcuts import render
+from audisl import views as aud_view
 
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from Hluchy.settings import MEDIA_ROOT
 import speech_recognition as sr
 from .forms import UploadAudio
 from .models import AudioDb
@@ -43,7 +39,7 @@ def image_url(text, image_name):
     Alp = {}
     for code in range(ord('A'), ord('Z') + 1):
         Alp[chr(code)] = os.path.join(
-            MEDIA_ROOT, "Alphabets", chr(code)+".jpg")
+            MEDIA_DIRS, "Alphabets", chr(code)+".jpg")
     words = text.split(' ')
     max_len = max(len(w) for w in words)
     if len(words) < 4:
@@ -61,14 +57,14 @@ def image_url(text, image_name):
                                 bottom=0, hspace=0, wspace=0)
             i += 1
         j += 1
-    image_path = os.path.join(MEDIA_ROOT, "audisl/imageFiles", image_name)
+    image_path = os.path.join(MEDIA_DIRS, "audisl/imageFiles", image_name)
     plt.savefig(image_path, figsize=(15, 15))
     # plt.show(image_path)
     return image_path, 'audisl/imageFiles/'+image_name
 
 
 def text_url(text, text_name):
-    text_path = os.path.join(MEDIA_ROOT, "audisl/textFiles", text_name)
+    text_path = os.path.join(MEDIA_DIRS, "audisl/textFiles", text_name)
     file1 = open(os.path.join(text_path), 'w')
     file1.write(text)
     file1.close()
@@ -78,7 +74,7 @@ def text_url(text, text_name):
 def audio_to_text(audio_voice):
     r = sr.Recognizer()
     audio_name = str(audio_voice)
-    audio_path = os.path.join(MEDIA_ROOT, "audisl/audioFiles", audio_name)
+    audio_path = os.path.join(MEDIA_DIRS, "audisl/audioFiles", audio_name)
     text = ""
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -92,83 +88,62 @@ def audio_to_text(audio_voice):
     return text
 
 
-@csrf_exempt
+# @csrf_exempt
 # @login_required
 def home(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            print("Brook was here")
-            # print(request.FILES['choice'])
-            instance = AudioDb()
-            if "file" in request.FILES:
-                audio = request.FILES["file"]
-                instance.audiofile.save(audio.name, audio)
-                instance.save()
-            else:
-                audio = request.session["filename"]
-                audio_p = audio_url(audio)
-                instance.audiofile = audio_p
-
-            text = audio_to_text(audio)
-            audio_name, text_name, image_name = filename(audio)
-            text_path, text_p = text_url(text, text_name)
-            image_path, image_p = image_url(text, image_name)
-            instance.textfile = text_p
-            instance.imagefile = image_p
-            instance.content = text
+    if request.method == "POST":
+        print("Brook was here")
+        # print(request.FILES['choice'])
+        instance = AudioDb()
+        if "file" in request.FILES:
+            audio = request.FILES["file"]
+            instance.audiofile.save(audio.name, audio)
             instance.save()
-            audio = None
-            data = {}
-            data['text'] = text
-            data['image'] = image_name
-            # data['image']	=instance.imagefile.url
-            json_data = json.dumps(data)
-            return HttpResponse(json_data, content_type="application/json")
         else:
-            form = UploadAudio()
-            context = {
-                "form": form,
-            }
-            return render(request, 'audisl/home.html', context)
+            audio = request.session["filename"]
+            audio_p = audio_url(audio)
+            instance.audiofile = audio_p
+
+        text = audio_to_text(audio)
+        audio_name, text_name, image_name = filename(audio)
+        text_path, text_p = text_url(text, text_name)
+        image_path, image_p = image_url(text, image_name)
+        instance.textfile = text_p
+        instance.imagefile = image_p
+        instance.content = text
+        instance.save()
+        audio = None
+        data = {}
+        data['text'] = text
+        data['image'] = image_name
+        # data['image']	=instance.imagefile.url
+        json_data = json.dumps(data)
+        return HttpResponse(json_data, content_type="application/json")
     else:
-        return redirect("../login")
+        form = UploadAudio()
+        context = {
+            "form": form,
+        }
+        return render(request, 'home.html', context)
 
 
 def index(request):
-    if request.user.is_authenticated:
-        return render(request, 'audisl/index.html', {})
-    else:
-        return redirect('../login')
+    return render(request, 'audio_to_image.html', {})
 
 
 @csrf_exempt
 def ajax(request):
-    if request.user.is_authenticated:
-        filename = "voice_"+str(randint(1000, 9999))
-        request.session["filename"] = filename+".wav"
+    filename = "voice_"+str(randint(1000, 9999))
+    request.session["filename"] = filename+".wav"
 
-        file_obj = request.FILES['audio'].read()
-        print(type(file_obj))
-        with default_storage.open('D:/KJSCE HACKATHON/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
-            destination.write(file_obj)
-            src = "D:/KJSCE HACKATHON/Hluchy/media/audisl/audioFiles/"+filename+".bin"
-            dst = "D:/KJSCE HACKATHON/Hluchy/media/audisl/audioFiles/"+filename+".wav"
-            sound = AudioSegment.from_file(src)
-            sound.export(dst, format="wav")
-            print('File Stored @ audio')
-        os.remove(src)  # to delete the .bin file
-        return redirect("../home")
-    else:
-        return redirect('../login')
-
-
-def about_project(request):
-    return render(request, 'audisl/about_project.html', {})
-
-
-def about_team(request):
-    return render(request, 'audisl/about_team.html', {})
-
-
-def instruction(request):
-    return render(request, 'audisl/instructions.html', {})
+    file_obj = request.FILES['audio'].read()
+    print(type(file_obj))
+    with default_storage.open('E:/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
+        destination.write(file_obj)
+        src = "E:/Hluchy/media/audisl/audioFiles/"+filename+".bin"
+        dst = "E:/Hluchy/media/audisl/audioFiles/"+filename+".wav"
+        sound = AudioSegment.from_file(src)
+        sound.export(dst, format="wav")
+        print('File Stored @ audio')
+    os.remove(src)  # to delete the .bin file
+    return redirect("../home")
