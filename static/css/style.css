@@ -64,3 +64,13 @@ h2{
     width: 45px;
     border: none;
 }
+
+#entered-text{
+    border: solid 1px #00ADB5;
+    height: 100px;
+    width: 100%;
+    border-radius:10px;
+    padding: auto;
+    margin: auto;
+    font-size: 30px;
+}
