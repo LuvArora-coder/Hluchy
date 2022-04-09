@@ -140,8 +140,8 @@ def ajax(request):
     print(type(file_obj))
     with default_storage.open('E:/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
         destination.write(file_obj)
-        src = "E:/Hluchy/media/audisl/audioFiles/"+filename+".bin"
-        dst = "E:/Hluchy/media/audisl/audioFiles/"+filename+".wav"
+        src = "E:\\Hluchy\\media\\audisl\\audioFiles\\"+filename+".bin"
+        dst = "E:\\Hluchy\\media\\audisl\\audioFiles\\"+filename+".wav"
         sound = AudioSegment.from_file(src)
         sound.export(dst, format="wav")
         print('File Stored @ audio')
