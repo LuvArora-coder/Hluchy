@@ -1,166 +1,142 @@
-import os
-from django.shortcuts import render
-from audisl import views as aud_view
-
-# Create your views here.
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
-import speech_recognition as sr
-from .forms import UploadAudio
-from .models import AudioDb
-from Hluchy.settings import *
-from django.core.files.base import ContentFile
-import matplotlib
-from matplotlib.pyplot import figure
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login,logout
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import nltk
+from django.contrib.staticfiles import finders
 from django.contrib.auth.decorators import login_required
-from django.core.files.storage import default_storage
-from random import randint
-from pydub import AudioSegment
-from os import path
-from pydub import AudioSegment
-import json
-import ffmpy
-import urllib
-import pydub
-#pydub.AudioSegment.converter = r"E:\\ffmpeg-5.0.1-full_build\\bin\\ffmpeg.exe"
 
-# Create your views here.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def home_view(request):
+	return render(request,'home.html')
 
 
-def filename(audio):
-    return str(audio), str(audio).split(".")[0]+'.txt', str(audio).split(".")[0]+'.png'
+def about_view(request):
+	return render(request,'about.html')
 
 
-def audio_url(audio):
-    return 'audisl/audioFiles/'+str(audio)
+def contact_view(request):
+	return render(request,'contact.html')
+
+@login_required(login_url="login")
+def animation_view(request):
+	if request.method == 'POST':
+		text = request.POST.get('sen')
+		#tokenizing the sentence
+		text.lower()
+		#tokenizing the sentence
+		words = word_tokenize(text)
+
+		tagged = nltk.pos_tag(words)
+		tense = {}
+		tense["future"] = len([word for word in tagged if word[1] == "MD"])
+		tense["present"] = len([word for word in tagged if word[1] in ["VBP", "VBZ","VBG"]])
+		tense["past"] = len([word for word in tagged if word[1] in ["VBD", "VBN"]])
+		tense["present_continuous"] = len([word for word in tagged if word[1] in ["VBG"]])
 
 
-def image_url(text, image_name):
-    Alp = {}
-    for code in range(ord('A'), ord('Z') + 1):
-        Alp[chr(code)] = os.path.join(
-            MEDIA_ROOT, "Alphabets", chr(code)+".jpg")
-    words = text.split(' ')
-    max_len = max(len(w) for w in words)
-    if len(words) < 4:
-        words += ['', '', '']
-    plt.subplot()
-    j = 0
-    for word in words:
-        i = 1+j*max_len
-        for key in word:
-            image = mpimg.imread((Alp[key.upper()]))
-            plt.subplot(len(words), max_len, i)
-            plt.axis('off')
-            plt.imshow(image, aspect='auto')
-            plt.subplots_adjust(left=0, right=1, top=1,
-                                bottom=0, hspace=0, wspace=0)
-            i += 1
-        j += 1
-    image_path = os.path.join(MEDIA_ROOT, "audisl/imageFiles", image_name)
-    plt.savefig(image_path, figsize=(15, 15))
-    # plt.show(image_path)
-    return image_path, 'audisl/imageFiles/'+image_name
+
+		#stopwords that will be removed
+		stop_words = set(["mightn't", 're', 'wasn', 'wouldn', 'be', 'has', 'that', 'does', 'shouldn', 'do', "you've",'off', 'for', "didn't", 'm', 'ain', 'haven', "weren't", 'are', "she's", "wasn't", 'its', "haven't", "wouldn't", 'don', 'weren', 's', "you'd", "don't", 'doesn', "hadn't", 'is', 'was', "that'll", "should've", 'a', 'then', 'the', 'mustn', 'i', 'nor', 'as', "it's", "needn't", 'd', 'am', 'have',  'hasn', 'o', "aren't", "you'll", "couldn't", "you're", "mustn't", 'didn', "doesn't", 'll', 'an', 'hadn', 'whom', 'y', "hasn't", 'itself', 'couldn', 'needn', "shan't", 'isn', 'been', 'such', 'shan', "shouldn't", 'aren', 'being', 'were', 'did', 'ma', 't', 'having', 'mightn', 've', "isn't", "won't"])
 
 
-def text_url(text, text_name):
-    text_path = os.path.join(MEDIA_ROOT, "audisl/textFiles", text_name)
-    file1 = open(os.path.join(text_path), 'w')
-    file1.write(text)
-    file1.close()
-    return text_path, 'audisl/textFiles/'+text_name
+
+		#removing stopwords and applying lemmatizing nlp process to words
+		lr = WordNetLemmatizer()
+		filtered_text = []
+		for w,p in zip(words,tagged):
+			if w not in stop_words:
+				if p[1]=='VBG' or p[1]=='VBD' or p[1]=='VBZ' or p[1]=='VBN' or p[1]=='NN':
+					filtered_text.append(lr.lemmatize(w,pos='v'))
+				elif p[1]=='JJ' or p[1]=='JJR' or p[1]=='JJS'or p[1]=='RBR' or p[1]=='RBS':
+					filtered_text.append(lr.lemmatize(w,pos='a'))
+
+				else:
+					filtered_text.append(lr.lemmatize(w))
 
 
-def audio_to_text(audio_voice):
-    r = sr.Recognizer()
-    audio_name = str(audio_voice)
-    audio_path = os.path.join(MEDIA_ROOT, "audisl/audioFiles", audio_name)
-    text = ""
-    with sr.AudioFile(audio_path) as source:
-        audio = r.record(source)
-        print('Done!')
+		#adding the specific word to specify tense
+		words = filtered_text
+		temp=[]
+		for w in words:
+			if w=='I':
+				temp.append('Me')
+			else:
+				temp.append(w)
+		words = temp
+		probable_tense = max(tense,key=tense.get)
 
-    try:
-        text = r.recognize_google(audio)
-        print(text)
-    except Exception as e:
-        print(e)
-    return text
-
-
-@csrf_exempt
-# @login_required
-def home(request):
-    if request.method == "POST":
-        print("Brook was here")
-        # print(request.FILES['choice'])
-        instance = AudioDb()
-        if "file" in request.FILES:
-            audio = request.FILES["file"]
-            instance.audiofile.save(audio.name, audio)
-            instance.save()
-        else:
-            audio = request.session["filename"]
-            audio_p = audio_url(audio)
-            instance.audiofile = audio_p
-
-        text = audio_to_text(audio)
-        audio_name, text_name, image_name = filename(audio)
-        text_path, text_p = text_url(text, text_name)
-        image_path, image_p = image_url(text, image_name)
-        instance.textfile = text_p
-        instance.imagefile = image_p
-        instance.content = text
-        instance.save()
-        audio = None
-        data = {}
-        data['text'] = text
-        data['image'] = image_name
-        # data['image']	=instance.imagefile.url
-        json_data = json.dumps(data)
-        return HttpResponse(json_data, content_type="application/json")
-    else:
-        form = UploadAudio()
-        context = {
-            "form": form,
-        }
-        return render(request, 'home.html', context)
+		if probable_tense == "past" and tense["past"]>=1:
+			temp = ["Before"]
+			temp = temp + words
+			words = temp
+		elif probable_tense == "future" and tense["future"]>=1:
+			if "Will" not in words:
+					temp = ["Will"]
+					temp = temp + words
+					words = temp
+			else:
+				pass
+		elif probable_tense == "present":
+			if tense["present_continuous"]>=1:
+				temp = ["Now"]
+				temp = temp + words
+				words = temp
 
 
-def index(request):
-    return render(request, 'home.html', {})
+		filtered_text = []
+		for w in words:
+			path = w + ".mp4"
+			f = finders.find(path)
+			#splitting the word if its animation is not present in database
+			if not f:
+				for c in w:
+					filtered_text.append(c)
+			#otherwise animation of word
+			else:
+				filtered_text.append(w)
+		words = filtered_text;
 
 
-@csrf_exempt
-def ajax(request):
-    filename = "voice_"+str(randint(1000, 9999))
-    request.session["filename"] = filename+".wav"
+		return render(request,'animation.html',{'words':words,'text':text})
+	else:
+		return render(request,'animation.html')
 
-    file_obj = request.FILES['audio'].read()
-    print(type(file_obj))
-<<<<<<< HEAD
-    with default_storage.open('D:/Dev/KJSCE__Hack/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
-        print('in destination')
-        destination.write(file_obj) 
-        src = "D:/Dev/KJSCE__Hack/Hluchy/media/audisl/audioFiles/"+filename+".bin"
-        print('found source file')
-        dst = "D:/Dev/KJSCE__Hack/Hluchy/media/audisl/audioFiles/"+filename+".wav"
-        print('found destination file')
-        sound = AudioSegment.from_file(src,format='bin')
-        print('after convertion')
-        sound.export(dst, format="wav")         
-=======
-    with default_storage.open('E:/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
-        destination.write(file_obj)
-        src = "E:/Hluchy/media/audisl/audioFiles/"+filename+".bin"
-        dst = "E:/Hluchy/media/audisl/audioFiles/"+filename+".wav"
-        sound = pydub.AudioSegment.from_file(src)
-        sound.export(dst, format="wav")
->>>>>>> 6f3abe30d979889e6e1c7e94b32c2fd3c3a29e08
-        print('File Stored @ audio')
-    os.remove(src)  # to delete the .bin file
-    return redirect("E:/Hluchy/templates/home.html")
+
+
+
+def signup_view(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			login(request,user)
+			# log the user in
+			return redirect('animation')
+	else:
+		form = UserCreationForm()
+	return render(request,'signup.html',{'form':form})
+
+
+
+def login_view(request):
+	if request.method == 'POST':
+		form = AuthenticationForm(data=request.POST)
+		if form.is_valid():
+			#log in user
+			user = form.get_user()
+			login(request,user)
+			if 'next' in request.POST:
+				return redirect(request.POST.get('next'))
+			else:
+				return redirect('animation')
+	else:
+		form = AuthenticationForm()
+	return render(request,'login.html',{'form':form})
+
+
+def logout_view(request):
+	logout(request)
+	return redirect("home")
