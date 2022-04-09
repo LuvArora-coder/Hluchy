@@ -1,5 +1,5 @@
 html {
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #navbar {
@@ -91,4 +91,10 @@ h2 {
     padding: auto;
     margin: auto;
     font-size: 30px;
+}
+
+.brand-name{
+    font-family: 'Bebas Neue', cursive;
+    font-size: 80px !important;
+    
 }

@@ -3,6 +3,11 @@
 
 
 {% block content %}
+<httpProtocol>
+    <customHeaders>
+      <add name="X-Frame-Options" value="SAMEORIGIN" />
+    </customHeaders>
+  </httpProtocol>
 <div class="container d-flex justify-content-evenly">
 	<div class="portions d-flex justify-content-evenly">
 
@@ -60,7 +65,7 @@
 		onclick="playPause()">Play/Pause</button>
 </div>
 <div class="box">
-	<iframe src="http://127.0.0.1:8000/convert/" frameborder="0" scrolling="no" width="100%" height="512" align="right"></iframe>
+	<iframe src="127.0.0.1:8000/convert/" frameborder="0" scrolling="no" width="100%" height="512" align="right"></iframe>
   </div>
 
 <script>
