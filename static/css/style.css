@@ -1,3 +1,40 @@
+html{
+    background-color: #222831;
+}
+
+#navbar{
+    background-color: #393E46 !important;
+    color: white;
+}
+body{
+    background-color: #222831 !important;
+
+}
+h2{
+    color:#EEEEEE;
+}
 a{
+    color: white;
+}
+
+.portions{
+    height: 50%;
+    display:flex;
+    flex-direction: column;
+}
+
+.input-box{
+    display: flex;
+    flex-direction: column;
+}
+.submit {
+    background-color: #00ADB5; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
     text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 10px;
 }

@@ -3,15 +3,24 @@
 
 
 {% block content %}
-<div class="split left">
-	<h2 align="center">Enter Text or Use Mic</h2>
-	<br>
+<div class="container d-flex justify-content-evenly">
+	<div class="portions">
+
+		<h2 align="center">Enter Text or Use Mic</h2>
+		<br>
 		<form action="" method="post" align="left">
-		{% csrf_token %}
-					<input type="text" name="sen" class="mytext" id="speechToText" placeholder="">
-					<button type="button" name="button" class="mic" onclick="record()"><img src="{% static 'mic3.png' %}" height="32px" width="38px" /></button>
-		  			&nbsp&nbsp&nbsp&nbsp
-		  			<input type="submit" name="submit" class="submit">
+			{% csrf_token %}
+			<div class="input-box">
+				<div class="d-flex flex-row justify-content-evenly align-items-center p-4">
+					<input type="text" name="sen" class="mytext" id="speechToText"
+						placeholder="">
+					<button type="button" name="button" class="mic" onclick="record()"><img
+							src="{% static 'mic3.png' %}" height="32px" width="38px" /></button>
+				</div>
+				<div class="d-flex justify-content-center">
+					<input type="submit" name="submit" class="submit">
+				</div>
+			</div>
 
 		</form>
 		<br>
@@ -23,34 +32,29 @@
 			<tr>
 				<td class="td">Key words in sentence:</td>
 				<td class="td">
-				<ul class="td" id="list" align="center">
-  					{% for word in words %}
-    				<li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
-  					{% endfor %}
-				</ul>
-			</td>
-		</tr>
-	</table></div>
-  <div class="split right">
-  <h2 align="center">Sign Language Animation</h2>
+					<ul class="td" id="list" align="center">
+						{% for word in words %}
+						<li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="portions">
 
-	<div style="text-align:center">	&nbsp&nbsp
-  	<button class="submit" onclick="playPause()">Play/Pause</button>
-  	<!--  LETS USE ONLY PLAY PAUSE BUTTON WITH 720 *420 ,IT FITS THE SCREEN ASHISH
-
-  	<button onclick="makeBig()">Big</button>
-  	<button onclick="makeSmall()">Small</button>
-  	<button onclick="makeNormal()">Normal</button>-->
-
-
-  	<video id="videoPlayer" width="600" height="350"  preload="auto" autoplay>
-    	<source src="" type="video/mp4">
-    Your browser does not support HTML5 video.
-  	</video>
-  	</div></div>
+		<h2 align="center">Sign Language Animation</h2>
+		<div> &nbsp&nbsp
+			<button class="submit" onclick="playPause()">Play/Pause</button>
+			<video id="videoPlayer" preload="auto" autoplay>
+				<source src="" type="video/mp4">
+				Your browser does not support HTML5 video.
+			</video>
+		</div>
+	</div>
 
 
-<script>
+	<script>
 	//webkitSpeechRecognition api for speech to text conversion
 	function record(){
 		var recognition = new webkitSpeechRecognition();
@@ -128,6 +132,4 @@
 		}
 
 	</script>
-
-
-{% endblock %}
+	{% endblock %}
