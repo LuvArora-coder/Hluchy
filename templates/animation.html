@@ -24,37 +24,43 @@
 
 		</form>
 		<br>
-		<table cellspacing="20px">
-			<tr>
-				<td class="td">The text that you entered is:</td>
-				<td class="td">{{ text }}</td>
-			</tr>
-			<tr>
-				<td class="td">Key words in sentence:</td>
-				<td class="td">
+		<div>
+			<div>
+
+				<p class="td">The text that you entered is:</p>
+				<p class="td">{{ text }}</p>
+			</div>
+
+			<br>
+			<div>
+
+				<p class="td">Key words in sentence:</p>
+				<p class="td">
 					<ul class="td" id="list" align="center">
 						{% for word in words %}
 						<li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
 						{% endfor %}
 					</ul>
-				</td>
-			</tr>
+				</p>
+			</div>
 		</table>
 	</div>
-	<div class="portions">
 
-		<h2 align="center">Sign Language Animation</h2>
-		<div> &nbsp&nbsp
-			<button class="submit" onclick="playPause()">Play/Pause</button>
-			<video id="videoPlayer" preload="auto" autoplay>
-				<source src="" type="video/mp4">
-				Your browser does not support HTML5 video.
-			</video>
-		</div>
+</div>
+<div class="portions">
+	<h2 align="center">Sign Language Animation</h2>
+	<div class="d-flex justify-content-evenly align-items-center"> 
+		<button id = "play-pause" class="submit" 
+		onclick="playPause()">Play/Pause</button>
+		<video id="videoPlayer" height ="300px" width="300px" preload="auto" autoplay>
+			<source src="" type="video/mp4">
+			Your browser does not support HTML5 video.
+		</video>
 	</div>
+</div>
 
 
-	<script>
+<script>
 	//webkitSpeechRecognition api for speech to text conversion
 	function record(){
 		var recognition = new webkitSpeechRecognition();
@@ -132,4 +138,4 @@
 		}
 
 	</script>
-	{% endblock %}
+{% endblock %}

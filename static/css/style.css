@@ -1,20 +1,26 @@
-html{
-    background-color: #222831;
-}
+
 
 #navbar{
     background-color: #393E46 !important;
     color: white;
 }
 body{
-    background-color: #222831 !important;
+    background: hsla(216, 18%, 16%, 1);
+
+background: linear-gradient(180deg, hsla(216, 18%, 16%, 1) 0%, hsla(217, 10%, 25%, 1) 100%);
+
+background: -moz-linear-gradient(180deg, hsla(216, 18%, 16%, 1) 0%, hsla(217, 10%, 25%, 1) 100%);
+
+background: -webkit-linear-gradient(180deg, hsla(216, 18%, 16%, 1) 0%, hsla(217, 10%, 25%, 1) 100%);
+
+filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#222831", endColorstr="#393E46", GradientType=1 );
 
 }
 h2{
     color:#EEEEEE;
 }
-a{
-    color: white;
+.nav-link, .navbar-brand{
+    color: white ;
 }
 
 .portions{
@@ -26,6 +32,9 @@ a{
 .input-box{
     display: flex;
     flex-direction: column;
+}
+.td{
+    color: #EEEEEE;
 }
 .submit {
     background-color: #00ADB5; /* Green */
