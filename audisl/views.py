@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from audisl import views as aud_view
 
@@ -21,9 +22,10 @@ from pydub import AudioSegment
 from os import path
 from pydub import AudioSegment
 import json
+import pydub
+pydub.AudioSegment.converter = r"E:\\ffmpeg-5.0.1-full_build\\bin\\ffmpeg.exe"
 
 # Create your views here.
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -39,7 +41,7 @@ def image_url(text, image_name):
     Alp = {}
     for code in range(ord('A'), ord('Z') + 1):
         Alp[chr(code)] = os.path.join(
-            MEDIA_DIRS, "Alphabets", chr(code)+".jpg")
+            MEDIA_ROOT, "Alphabets", chr(code)+".jpg")
     words = text.split(' ')
     max_len = max(len(w) for w in words)
     if len(words) < 4:
@@ -57,14 +59,14 @@ def image_url(text, image_name):
                                 bottom=0, hspace=0, wspace=0)
             i += 1
         j += 1
-    image_path = os.path.join(MEDIA_DIRS, "audisl/imageFiles", image_name)
+    image_path = os.path.join(MEDIA_ROOT, "audisl/imageFiles", image_name)
     plt.savefig(image_path, figsize=(15, 15))
     # plt.show(image_path)
     return image_path, 'audisl/imageFiles/'+image_name
 
 
 def text_url(text, text_name):
-    text_path = os.path.join(MEDIA_DIRS, "audisl/textFiles", text_name)
+    text_path = os.path.join(MEDIA_ROOT, "audisl/textFiles", text_name)
     file1 = open(os.path.join(text_path), 'w')
     file1.write(text)
     file1.close()
@@ -74,7 +76,7 @@ def text_url(text, text_name):
 def audio_to_text(audio_voice):
     r = sr.Recognizer()
     audio_name = str(audio_voice)
-    audio_path = os.path.join(MEDIA_DIRS, "audisl/audioFiles", audio_name)
+    audio_path = os.path.join(MEDIA_ROOT, "audisl/audioFiles", audio_name)
     text = ""
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -88,7 +90,7 @@ def audio_to_text(audio_voice):
     return text
 
 
-# @csrf_exempt
+@csrf_exempt
 # @login_required
 def home(request):
     if request.method == "POST":
@@ -128,7 +130,7 @@ def home(request):
 
 
 def index(request):
-    return render(request, 'audio_to_image.html', {})
+    return render(request, 'home.html', {})
 
 
 @csrf_exempt
@@ -140,10 +142,10 @@ def ajax(request):
     print(type(file_obj))
     with default_storage.open('E:/Hluchy/media/audisl/audioFiles/'+filename+".bin", 'wb+') as destination:
         destination.write(file_obj)
-        src = "E:\\Hluchy\\media\\audisl\\audioFiles\\"+filename+".bin"
-        dst = "E:\\Hluchy\\media\\audisl\\audioFiles\\"+filename+".wav"
+        src = "E:/Hluchy/media/audisl/audioFiles/"+filename+".bin"
+        dst = "E:/Hluchy/media/audisl/audioFiles/"+filename+".wav"
         sound = AudioSegment.from_file(src)
         sound.export(dst, format="wav")
         print('File Stored @ audio')
     os.remove(src)  # to delete the .bin file
-    return redirect("../home")
+    return redirect("E:/Hluchy/templates/home.html")
