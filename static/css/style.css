@@ -119,6 +119,15 @@ h2 {
     padding:auto;
     margin:auto;    
 }
+#list1{
+    border: solid 1px #00ADB5;
+    border-radius:10px;
+    width:420px;
+    height:340px;
+    padding:10px;
+    padding-bottom: 10px;
+    margin:10px;    
+}
 
 .thank-you{
     color: #eeeeee;
