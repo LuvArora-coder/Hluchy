@@ -1,4 +1,4 @@
-# Hluchy
+# HLUCHY
 
 # KJSCE HACKATHON 6.0
 
