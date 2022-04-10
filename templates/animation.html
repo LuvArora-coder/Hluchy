@@ -8,7 +8,7 @@
       <add name="X-Frame-Options" value="SAMEORIGIN" />
     </customHeaders>
   </httpProtocol>
-<div class="container d-flex justify-content-evenly">
+<div class="	iner d-flex justify-content-evenly">
 	<div class="portions d-flex justify-content-evenly">
 
 		<h2 align="center">Enter Text or Use Mic</h2>
@@ -32,7 +32,7 @@
 		<br>
 		<div>
 			<div>
-				<p class="td">The text that you entered is:</p>
+				<p class="heading-text">The text that you entered is:</p>
 				<div id="entered-text" class="d-flex justify-content-center align-items-center">
 
 					<p class="td">{{ text }}</p>
@@ -42,15 +42,15 @@
 			<br>
 			<div>
 
-				<p class="td">Key words in sentence:</p>
+				<p class="heading-text">Key words in sentence:</p>
 				<p class="td">
-					<ul class="td" id="list" align="center">
+					<div class="d-flex flex-row justify-content-center" id="list" align="center">
 						{% for word in words %}
-						<li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
+						<p id="{{ i }}" style="margin-right: 8px">{{ word }}</p>
 						{% endfor %}
-					</ul>
+					</div>
 				</p>
-			</div>
+			</div> 	
 		</table>
 	</div>
 
@@ -64,9 +64,9 @@
 	<button id="play-pause" class="submit"
 		onclick="playPause()">Play/Pause</button>
 </div>
-<div class="box">
+<!-- <div class="box">
 	<iframe src="127.0.0.1:8000/convert/" frameborder="0" scrolling="no" width="100%" height="512" align="right"></iframe>
-  </div>
+  </div> -->
 
 <script>
 	//webkitSpeechRecognition api for speech to text conversion
@@ -83,7 +83,7 @@
 	function play()
 	{
 		var videoSource = new Array();
-		var	videos = document.getElementById("list").getElementsByTagName("li");
+		var	videos = document.getElementById("list").getElementsByTagName("p");
 		var j;
 		for(j=0;j<videos.length;j++)
 		{
@@ -95,23 +95,23 @@
 
 		function videoPlay(videoNum)
 		{
-			document.getElementById("list").getElementsByTagName("li")[videoNum].style.color = "#09edc7";
-			document.getElementById("list").getElementsByTagName("li")[videoNum].style.fontSize = "xx-large";
+			document.getElementById("list").getElementsByTagName("p")[videoNum].style.color = "#09edc7";
+			document.getElementById("list").getElementsByTagName("p")[videoNum].style.fontSize = "xx-large";
 			document.getElementById("videoPlayer").setAttribute("src", videoSource[videoNum]);
 	    	document.getElementById("videoPlayer").load();
 	    	document.getElementById("videoPlayer").play();
 
 		}
 		document.getElementById('videoPlayer').addEventListener('ended', myHandler, false);
-		document.getElementById("list").getElementsByTagName("li")[0].style.color = "#09edc7";
-		document.getElementById("list").getElementsByTagName("li")[0].style.fontSize = "xx-large";
+		document.getElementById("list").getElementsByTagName("p")[0].style.color = "#09edc7";
+		document.getElementById("list").getElementsByTagName("p")[0].style.fontSize = "xx-large";
 
 		videoPlay(0); // play the video
 
 		function myHandler()
 		{
-	 		document.getElementById("list").getElementsByTagName("li")[i].style.color = "#feda6a";
-			document.getElementById("list").getElementsByTagName("li")[i].style.fontSize = "20px";
+	 		document.getElementById("list").getElementsByTagName("p")[i].style.color = "#feda6a";
+			document.getElementById("list").getElementsByTagName("p")[i].style.fontSize = "20px";
 			i++;
 	    	if (i == videoCount)
 	    	{

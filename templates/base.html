@@ -23,37 +23,26 @@
   </head>
   <body>
 
-
-    <!-- <ul id="nav">
-  <li class="li"><a class="active" href="{% url 'home' %}">Home</a></li>
-  <li class="li"><a href="{% url 'animation' %}">Convertor</a></li>
-  {% if not user.is_authenticated %}
-  <li class="li"><a href="{% url 'signup' %}">Sign Up</a></li>
-  {% endif %}
-  {% if user.is_authenticated %}
-  <li class="li"><a href="{% url 'logout' %}">Log-Out</a></li>
-  {% else %}
-    <li class="li"><a href="{% url 'login' %}">Log-in</a></li>
-  {% endif %}
-  <li class="li"><a href="{% url 'contact' %}">Contact</a></li>
-  <li class="li"><a href="{% url 'about' %}">About</a></li>
-</ul> -->
     <div>
 
       <nav id="navbar" class="navbar navbar-expand-lg">
-        <div class="container">
+        <div class="container navbar-container">
           <a class="navbar-brand brand-name" href="#">Hluchy</a>
           <div class="navbar" id="navbarNavTabs">
             <div class="navbar-nav nav">
-              <a class="nav-link" href="/convert"
-                aria-selected="true">Convert</a>
-              <a class="nav-link" href="#nav-catalog2" role="tab">About</a>
+              {% if user.is_authenticated %}
+              <a class="nav-link navbar-link" href="{% url 'animation' %}" role="tab">Convert</a>
+              
+              <a class="nav-link navbar-link" href="{% url 'videoconf' %}"
+                aria-selected="true">Video Conference</a>
+                {% endif %}
+              <a class="nav-link navbar-link" href="{% url 'about' %}" role="tab">About</a>
 
               {% if user.is_authenticated %}
-              <a class="nav-link" href="{% url 'logout' %}">Log-Out</a>
+              <a class="nav-link navbar-link" href="{% url 'logout' %}">Log-Out</a>
               {% else %}
-              <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-              <a class="nav-link" href="{% url 'login' %}">Log-in</a>
+              <a class="nav-link navbar-link" href="{% url 'signup' %}">Sign Up</a>
+              <a class="nav-link navbar-link" href="{% url 'login' %}">Log-in</a>
               {% endif %}
 
             </div>
